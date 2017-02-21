@@ -1,0 +1,77 @@
+<html>
+<head>
+	<title>Simple Blog</title>
+	<style>
+		body {margin: 0px; padding:0px; background-color: #e8e8e8}
+		.header{position: fixed; top:0px; background-color: #5f5f5f; height: 30px; width: 100%;}
+		.footer {position: fixed; bottom: 0px;background-color: #5f5f5f; height: 30px; width: 100%;}
+		.content {padding: 10px;float:left; width: 65%; overflow-y: scroll; max-height: 570px;}
+		.postform {padding: 15px; position:absolute; left: 66%; width: 30%;}
+		.container {padding-top: 50px; width:100%;}
+		.meta {font-size: 12px; color:grey; font-style: italic;}
+		.header div{color: white; position: relative; top: 50%; transform: translateY(-50%);}
+	</style>
+	<script>
+		function validateForm(){
+			if( document.blogform.title.value == "" )
+			{
+	            alert( "Please provide Title!" );
+	            document.blogform.title.focus() ;
+	            return false;
+         	}
+         	if( document.blogform.user.value == "" )
+			{
+	            alert( "Please provide User name!" );
+	            document.blogform.user.focus() ;
+	            return false;
+         	}
+		}
+	</script>
+</head>
+<body>
+	<div>
+		<div class="header" align="center">
+			<div>Welcome to Blog place</div>
+		</div>
+		<div class='container'>
+			<div class="content">
+				{% if blogs %}
+					{% for blog in blogs %}
+						<h2>{{ blog.title }}<div class="meta"><span>Posted on {{blog.posted}} by {{ blog.user }}</span></div></h2>
+						<div class="content-blog">
+							<p>{{ blog.content }}</p>
+						</div>
+					{% endfor %}
+				{% else %}
+					<p align="center">No blogs are available.</p>
+				{% endif %}
+			</div>
+			<div class='postform'>
+				<form name="blogform" action="" onsubmit="return validateForm();" method='POST'>
+					{% csrf_token %} 
+					Title: <span style="color:red; font-size: 12px;">*</span><br>
+					<input type="text" name="title" required>
+					<br>
+					Category:<br>
+					<select name="category">
+						{% for val, name in categories %}
+							<option value="{{ val }}">{{ name }}</option>
+						{% endfor %}
+  					</select>
+  					<br>
+					User name: <span style="color:red; font-size: 12px;">*</span><br>
+					<input type="text" name="user" required>
+					<br>
+					Content:<br>
+					<textarea name="content" rows=10 cols=50></textarea>
+					<br><br>
+					<input align="right" type="submit" value="POST">
+				</form> 
+				<p class="error" style="color: red">{% if error %}{{ error }}{% endif %}</p>
+			</div>
+			<div style="clear:both"></div>
+		</div>
+		<div class="footer" align="center"></div>
+	</div>
+</body>
+</html>
